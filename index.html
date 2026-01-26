@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Santo Rosário · Método Montfort</title>
+    
+    <!-- Icons & PWA -->
+    <link rel="icon" type="image/x-icon" href="/rosario-tradicional/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/rosario-tradicional/icon-192.png">
+    <link rel="manifest" href="/rosario-tradicional/manifest.json">
+    <link rel="apple-touch-icon" href="/rosario-tradicional/icon-192.png">
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Reze o Santo Rosário pelo Método de São Luís de Montfort. App completo com meditações, calendário e acompanhamento.">
+    <meta name="theme-color" content="#080709">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Rosário">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/navigation.css">
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/prayer.css">
+    <link rel="stylesheet" href="css/calendar.css">
+    <link rel="stylesheet" href="css/friends.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/modals.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Auth Screen -->
+    <div id="auth-screen">
+        <div class="auth-container">
+            <div class="auth-logo"></div>
+            <h1 class="auth-title">Rosário</h1>
+            <p class="auth-subtitle">Método de São Luís de Montfort</p>
+            <div class="auth-info">
+                ✨ <strong>Autenticação Segura:</strong> Seus dados são protegidos com Firebase!
+            </div>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login" type="button">Entrar</button>
+                <button class="auth-tab" data-tab="register" type="button">Criar Conta</button>
+            </div>
+            <form id="login-form" class="auth-form active">
+                <div class="input-group">
+                    <label class="input-label">Nome de Usuário</label>
+                    <input type="text" class="input-field" id="login-username" placeholder="Seu nome de usuário" required autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Senha</label>
+                    <input type="password" class="input-field" id="login-password" placeholder="Sua senha" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="auth-btn" id="login-btn">Entrar</button>
+                <div class="auth-error" id="login-error"></div>
+            </form>
+            <form id="register-form" class="auth-form">
+                <div class="input-group">
+                    <label class="input-label">Nome de Usuário</label>
+                    <input type="text" class="input-field" id="register-username" placeholder="Escolha um nome" required minlength="3" autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Nome Completo</label>
+                    <input type="text" class="input-field" id="register-displayname" placeholder="Seu nome completo" required minlength="2" autocomplete="name">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Crie uma Senha</label>
+                    <input type="password" class="input-field" id="register-password" placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Confirme a Senha</label>
+                    <input type="password" class="input-field" id="register-confirm" placeholder="Repita a senha" required autocomplete="new-password">
+                </div>
+                <button type="submit" class="auth-btn" id="register-btn">Criar Conta</button>
+                <div class="auth-error" id="register-error"></div>
+                <div class="auth-success" id="register-success"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="main-app" class="hidden">
+        <div class="app-content">
+            <!-- Home Tab -->
+            <div id="tab-home" class="tab-content active"></div>
+            
+            <!-- Rosary Tab -->
+            <div id="tab-rosary" class="tab-content"></div>
+            
+            <!-- Calendar Tab -->
+            <div id="tab-calendar" class="tab-content"></div>
+            
+            <!-- Friends Tab -->
+            <div id="tab-friends" class="tab-content"></div>
+            
+            <!-- Profile Tab -->
+            <div id="tab-profile" class="tab-content"></div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button type="button" class="nav-item active" data-tab="home">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span class="nav-label">Início</span>
+            </button>
+            <button type="button" class="nav-item" id="nav-rosary-btn" data-tab="rosary">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                    <circle cx="12" cy="3" r="2.5"/>
+                    <circle cx="19.5" cy="7.5" r="2"/>
+                    <circle cx="19.5" cy="16.5" r="2"/>
+                    <circle cx="12" cy="21" r="2.5"/>
+                    <circle cx="4.5" cy="16.5" r="2"/>
+                    <circle cx="4.5" cy="7.5" r="2"/>
+                </svg>
+                <span class="nav-label">Rosário</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="calendar">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span class="nav-label">Calendário</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="friends">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span class="nav-label">Amigos</span>
+            </button>
+            <button type="button" class="nav-item" data-tab="profile">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span class="nav-label">Perfil</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Avatar Modal -->
+    <div id="avatar-modal">
+        <div class="avatar-modal-content">
+            <button type="button" class="avatar-modal-close" onclick="closeAvatarModal()">×</button>
+            <h2 class="avatar-modal-title">Escolha seu Avatar</h2>
+            <div class="avatar-grid" id="avatar-grid"></div>
+            <button type="button" class="avatar-save-btn" id="avatar-save-btn" onclick="saveAvatar()">
+                Salvar Avatar
+            </button>
+        </div>
+    </div>
+
+    <!-- Prayer Screen -->
+    <div id="prayer-screen">
+        <div class="rosary-rail">
+            <div class="rosary-chain"></div>
+            <div class="center-guide"></div>
+            <div id="bead-track"></div>
+        </div>
+        <div class="prayer-main">
+            <header class="prayer-header">
+                <button class="back-btn" onclick="app.confirmExit()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    Sair
+                </button>
+                <div class="progress-compact">
+                    <div class="progress-bar-mini"><div class="progress-fill-mini" id="progress-fill"></div></div>
+                    <span class="progress-text" id="progress-text">1/59</span>
+                </div>
+            </header>
+            <div class="prayer-body" id="prayer-body">
+                <div class="prayer-group" id="prayer-group"></div>
+                <div class="prayer-mystery" id="prayer-mystery"></div>
+                <h2 class="prayer-name" id="prayer-name"></h2>
+                <div class="prayer-count" id="prayer-count"></div>
+                <div class="meditation-box" id="meditation-box">
+                    <div class="meditation-label">Meditação</div>
+                    <p class="meditation-text" id="meditation-text"></p>
+                </div>
+                <button class="prayer-text-toggle" id="prayer-text-toggle" onclick="app.toggleText()">
+                    <span>Ver texto da oração</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="prayer-full-text" id="prayer-full-text"></div>
+                <p class="nav-hint">Toque nas contas ou use as setas para navegar</p>
+            </div>
+            <footer class="prayer-footer">
+                <button class="nav-btn" id="prev-btn" onclick="app.prev()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <button class="nav-btn primary" id="next-btn" onclick="app.next()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Completion Screen -->
+    <div id="completion-screen">
+        <svg class="completion-icon" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="50" cy="50" r="42"/>
+            <path d="M28 50l16 16 28-32" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h2 class="completion-title">Deo Gratias</h2>
+        <p class="completion-subtitle" id="completion-msg"></p>
+        <div class="completion-stats">
+            <div class="stat"><div class="stat-value" id="stat-aves">0</div><div class="stat-label">Ave Marias</div></div>
+            <div class="stat"><div class="stat-value" id="stat-paters">0</div><div class="stat-label">Pai Nossos</div></div>
+        </div>
+        <button class="btn-home" onclick="app.home()">Voltar ao Início</button>
+    </div>
+
+    <!-- Audio Toggle -->
+    <button class="audio-toggle" id="audio-toggle" onclick="app.toggleAudio()" title="Ativar/Desativar sons (M)">
+        <svg id="audio-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none;">
+            <path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        </svg>
+        <svg id="audio-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+        </svg>
+    </button>
+
+    <!-- Scripts -->
+    <script src="js/templates/home.js"></script>
+    <script src="js/templates/rosary.js"></script>
+    <script src="js/templates/calendar.js"></script>
+    <script src="js/templates/friends.js"></script>
+    <script src="js/templates/profile.js"></script>
+    
+    <script type="module" src="js/firebase-auth.js"></script>
+    <script src="js/utils/avatar-helper.js"></script>
+    <script src="js/components/avatar-system.js"></script>
+    <script src="js/components/audio-system.js"></script>
+    <script src="js/data/prayers.js"></script>
+    <script src="js/data/montfort.js"></script>
+    <script src="js/core/prayer-app.js"></script>
+    <script src="js/init.js"></script>
+</body>
+</html>

@@ -2,254 +2,225 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Santo Rosário · Método Montfort</title>
     
-    <!-- Icons & PWA -->
-    <link rel="icon" type="image/x-icon" href="/rosario-tradicional/favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="/rosario-tradicional/icon-192.png">
-    <link rel="manifest" href="/rosario-tradicional/manifest.json">
-    <link rel="apple-touch-icon" href="/rosario-tradicional/icon-192.png">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon-192.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icon-192.png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="style.css">
     
-    <!-- Meta Tags -->
-    <meta name="description" content="Reze o Santo Rosário pelo Método de São Luís de Montfort. App completo com meditações, calendário e acompanhamento.">
-    <meta name="theme-color" content="#080709">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Rosário">
-    
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
-    
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/auth.css">
-    <link rel="stylesheet" href="css/navigation.css">
-    <link rel="stylesheet" href="css/home.css">
-    <link rel="stylesheet" href="css/prayer.css">
-    <link rel="stylesheet" href="css/calendar.css">
-    <link rel="stylesheet" href="css/friends.css">
-    <link rel="stylesheet" href="css/profile.css">
-    <link rel="stylesheet" href="css/modals.css">
-    <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
-    <!-- Auth Screen -->
-    <div id="auth-screen">
-        <div class="auth-container">
-            <div class="auth-logo"></div>
-            <h1 class="auth-title">Rosário</h1>
-            <p class="auth-subtitle">Método de São Luís de Montfort</p>
-            <div class="auth-info">
-                ✨ <strong>Autenticação Segura:</strong> Seus dados são protegidos com Firebase!
+
+<div id="custom-alert" class="custom-alert">
+    <div class="custom-alert-content">
+        <svg class="custom-alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <h3 class="custom-alert-title" id="alert-title">Sucesso!</h3>
+        <p class="custom-alert-message" id="alert-message">Operação concluída</p>
+        <button type="button" class="custom-alert-btn" onclick="closeCustomAlert()">OK</button>
+    </div>
+</div>
+
+<div id="auth-screen">
+    <div class="auth-container">
+        <div class="auth-logo"><img src="/favicon.ico" alt="Logo Rosário"></div>
+        <h1 class="auth-title">Rosário</h1>
+        <p class="auth-subtitle">Método de São Luís de Montfort</p>
+        <div class="auth-info">✨ <strong>Autenticação Segura:</strong> Seus dados são protegidos com Firebase!</div>
+        
+        <div class="auth-tabs">
+            <button class="auth-tab active" data-tab="login">Entrar</button>
+            <button class="auth-tab" data-tab="register">Criar Conta</button>
+        </div>
+        
+        <form id="login-form" class="auth-form active">
+            <div class="input-group"><label class="input-label">Nome de Usuário</label><input type="text" class="input-field" id="login-username" required autocomplete="username"></div>
+            <div class="input-group"><label class="input-label">Senha</label><input type="password" class="input-field" id="login-password" required autocomplete="current-password"></div>
+            <button type="submit" class="auth-btn" id="login-btn">Entrar</button>
+            <div class="auth-error" id="login-error"></div>
+        </form>
+        
+        <form id="register-form" class="auth-form">
+            <div class="input-group"><label class="input-label">Nome de Usuário</label><input type="text" class="input-field" id="register-username" required minlength="3" autocomplete="username"></div>
+            <div class="input-group"><label class="input-label">Nome Completo</label><input type="text" class="input-field" id="register-displayname" required minlength="2" autocomplete="name"></div>
+            <div class="input-group"><label class="input-label">Crie uma Senha</label><input type="password" class="input-field" id="register-password" required minlength="6" autocomplete="new-password"></div>
+            <div class="input-group"><label class="input-label">Confirme a Senha</label><input type="password" class="input-field" id="register-confirm" required autocomplete="new-password"></div>
+            <button type="submit" class="auth-btn" id="register-btn">Criar Conta</button>
+            <div class="auth-error" id="register-error"></div>
+            <div class="auth-success" id="register-success"></div>
+        </form>
+    </div>
+</div>
+
+<div id="main-app" class="hidden">
+    <div class="app-content">
+        <div id="tab-home" class="tab-content active">
+            <div class="home-screen-content">
+                <div style="text-align: center; margin-bottom: 28px;">
+                    <p style="font-family: var(--font-body); font-size: 1rem; color: var(--text-muted);">Bem-vindo(a),</p>
+                    <h2 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--text-primary); letter-spacing: 0.1em;" id="home-user-name">Peregrino</h2>
+                </div>
+                <div style="width: 100%; max-width: 360px; margin: 0 auto 24px; background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-secondary) 100%); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 32px 24px; text-align: center; position: relative;">
+                    <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-dim));"></div>
+                    <div style="font-family: var(--font-display); font-size: 3.5rem; font-weight: 600; color: var(--gold);" id="home-streak-count">0</div>
+                    <div style="font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-muted);">Dias Consecutivos</div>
+                </div>
+                <div style="width: 100%; max-width: 360px; margin: 0 auto 24px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px;">
+                    <span style="font-family: var(--font-display); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted);">Intenção do Dia</span>
+                    <p style="font-family: var(--font-body); font-size: 1.1rem; font-style: italic; color: var(--text-secondary); margin-top: 10px;" id="home-intention">Carregando...</p>
+                </div>
             </div>
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="login" type="button">Entrar</button>
-                <button class="auth-tab" data-tab="register" type="button">Criar Conta</button>
+        </div>
+
+        <div id="tab-rosary" class="tab-content">
+            <div style="padding: 24px 24px 100px 24px; min-height: 100%;">
+                <h2 style="font-family: var(--font-display); font-size: 1.2rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-primary); text-align: center; margin-bottom: 32px;">Escolha o Rosário</h2>
+                <div style="width: 100%; max-width: 360px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px;">
+                    <button class="btn-mystery" onclick="app.start('gozosos')">Mistérios Gozosos</button>
+                    <button class="btn-mystery" onclick="app.start('dolorosos')">Mistérios Dolorosos</button>
+                    <button class="btn-mystery" onclick="app.start('gloriosos')">Mistérios Gloriosos</button>
+                    <button class="btn-mystery btn-complete" onclick="app.start('completo')">Rosário Completo<small>Todos os mistérios</small></button>
+                </div>
             </div>
-            <form id="login-form" class="auth-form active">
-                <div class="input-group">
-                    <label class="input-label">Nome de Usuário</label>
-                    <input type="text" class="input-field" id="login-username" placeholder="Seu nome de usuário" required autocomplete="username">
-                </div>
-                <div class="input-group">
-                    <label class="input-label">Senha</label>
-                    <input type="password" class="input-field" id="login-password" placeholder="Sua senha" required autocomplete="current-password">
-                </div>
-                <button type="submit" class="auth-btn" id="login-btn">Entrar</button>
-                <div class="auth-error" id="login-error"></div>
-            </form>
-            <form id="register-form" class="auth-form">
-                <div class="input-group">
-                    <label class="input-label">Nome de Usuário</label>
-                    <input type="text" class="input-field" id="register-username" placeholder="Escolha um nome" required minlength="3" autocomplete="username">
-                </div>
-                <div class="input-group">
-                    <label class="input-label">Nome Completo</label>
-                    <input type="text" class="input-field" id="register-displayname" placeholder="Seu nome completo" required minlength="2" autocomplete="name">
-                </div>
-                <div class="input-group">
-                    <label class="input-label">Crie uma Senha</label>
-                    <input type="password" class="input-field" id="register-password" placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password">
-                </div>
-                <div class="input-group">
-                    <label class="input-label">Confirme a Senha</label>
-                    <input type="password" class="input-field" id="register-confirm" placeholder="Repita a senha" required autocomplete="new-password">
-                </div>
-                <button type="submit" class="auth-btn" id="register-btn">Criar Conta</button>
-                <div class="auth-error" id="register-error"></div>
-                <div class="auth-success" id="register-success"></div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Main App -->
-    <div id="main-app" class="hidden">
-        <div class="app-content">
-            <!-- Home Tab -->
-            <div id="tab-home" class="tab-content active"></div>
-            
-            <!-- Rosary Tab -->
-            <div id="tab-rosary" class="tab-content"></div>
-            
-            <!-- Calendar Tab -->
-            <div id="tab-calendar" class="tab-content"></div>
-            
-            <!-- Friends Tab -->
-            <div id="tab-friends" class="tab-content"></div>
-            
-            <!-- Profile Tab -->
-            <div id="tab-profile" class="tab-content"></div>
         </div>
 
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <button type="button" class="nav-item active" data-tab="home">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                    <polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-                <span class="nav-label">Início</span>
-            </button>
-            <button type="button" class="nav-item" id="nav-rosary-btn" data-tab="rosary">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/>
-                    <circle cx="12" cy="3" r="2.5"/>
-                    <circle cx="19.5" cy="7.5" r="2"/>
-                    <circle cx="19.5" cy="16.5" r="2"/>
-                    <circle cx="12" cy="21" r="2.5"/>
-                    <circle cx="4.5" cy="16.5" r="2"/>
-                    <circle cx="4.5" cy="7.5" r="2"/>
-                </svg>
-                <span class="nav-label">Rosário</span>
-            </button>
-            <button type="button" class="nav-item" data-tab="calendar">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                    <line x1="16" y1="2" x2="16" y2="6"/>
-                    <line x1="8" y1="2" x2="8" y2="6"/>
-                    <line x1="3" y1="10" x2="21" y2="10"/>
-                </svg>
-                <span class="nav-label">Calendário</span>
-            </button>
-            <button type="button" class="nav-item" data-tab="friends">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                    <circle cx="9" cy="7" r="4"/>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                </svg>
-                <span class="nav-label">Amigos</span>
-            </button>
-            <button type="button" class="nav-item" data-tab="profile">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                </svg>
-                <span class="nav-label">Perfil</span>
-            </button>
-        </nav>
-    </div>
-
-    <!-- Avatar Modal -->
-    <div id="avatar-modal">
-        <div class="avatar-modal-content">
-            <button type="button" class="avatar-modal-close" onclick="closeAvatarModal()">×</button>
-            <h2 class="avatar-modal-title">Escolha seu Avatar</h2>
-            <div class="avatar-grid" id="avatar-grid"></div>
-            <button type="button" class="avatar-save-btn" id="avatar-save-btn" onclick="saveAvatar()">
-                Salvar Avatar
-            </button>
-        </div>
-    </div>
-
-    <!-- Prayer Screen -->
-    <div id="prayer-screen">
-        <div class="rosary-rail">
-            <div class="rosary-chain"></div>
-            <div class="center-guide"></div>
-            <div id="bead-track"></div>
-        </div>
-        <div class="prayer-main">
-            <header class="prayer-header">
-                <button class="back-btn" onclick="app.confirmExit()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                    Sair
-                </button>
-                <div class="progress-compact">
-                    <div class="progress-bar-mini"><div class="progress-fill-mini" id="progress-fill"></div></div>
-                    <span class="progress-text" id="progress-text">1/59</span>
+        <div id="tab-calendar" class="tab-content">
+            <div style="padding: 24px 24px 100px 24px;">
+                <h2 style="text-align: center; font-family: var(--font-display); color: var(--text-primary); margin-bottom: 24px;">Calendário</h2>
+                <div style="text-align: center; margin-bottom: 16px;">
+                    <button id="prev-month-btn" style="background:none; border:none; color:var(--text-muted); font-size:1.5rem;">&lt;</button>
+                    <span id="calendar-month-year" style="font-family: var(--font-display); margin: 0 16px;"></span>
+                    <button id="next-month-btn" style="background:none; border:none; color:var(--text-muted); font-size:1.5rem;">&gt;</button>
                 </div>
-            </header>
-            <div class="prayer-body" id="prayer-body">
-                <div class="prayer-group" id="prayer-group"></div>
-                <div class="prayer-mystery" id="prayer-mystery"></div>
-                <h2 class="prayer-name" id="prayer-name"></h2>
-                <div class="prayer-count" id="prayer-count"></div>
-                <div class="meditation-box" id="meditation-box">
-                    <div class="meditation-label">Meditação</div>
-                    <p class="meditation-text" id="meditation-text"></p>
-                </div>
-                <button class="prayer-text-toggle" id="prayer-text-toggle" onclick="app.toggleText()">
-                    <span>Ver texto da oração</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
-                </button>
-                <div class="prayer-full-text" id="prayer-full-text"></div>
-                <p class="nav-hint">Toque nas contas ou use as setas para navegar</p>
+                <div id="calendar-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; max-width: 400px; margin: 0 auto;"></div>
             </div>
-            <footer class="prayer-footer">
-                <button class="nav-btn" id="prev-btn" onclick="app.prev()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
-                </button>
-                <button class="nav-btn primary" id="next-btn" onclick="app.next()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-                </button>
-            </footer>
+        </div>
+
+        <div id="tab-friends" class="tab-content">
+            <div style="padding: 24px;">
+                <div id="friends-main-view">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px;">
+                        <h2 style="font-family: var(--font-display); font-size: 1.2rem; color: var(--text-primary);">AMIGOS</h2>
+                        <button onclick="openInboxModal()" style="background:none; border:none; color:var(--gold); position:relative; cursor:pointer;">
+                            <svg style="width:28px; height:28px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            <div id="inbox-badge" style="position:absolute; top:-2px; right:-2px; width:10px; height:10px; background:#e07070; border-radius:50%; display:none; border:2px solid var(--bg-deep);"></div>
+                        </button>
+                    </div>
+                    
+                    <div style="width: 100%; max-width: 400px; margin: 0 auto 24px; display:flex; gap:8px;">
+                        <input type="text" id="friend-search-input" placeholder="@usuario" style="flex:1; padding:12px; background:var(--bg-card); border:1px solid var(--border-subtle); color:white; border-radius:8px;">
+                        <button onclick="searchFriend()" style="padding:12px; background:var(--gold); border:none; border-radius:8px; cursor:pointer;">Buscar</button>
+                    </div>
+                    <div id="search-result"></div>
+
+                    <div id="friend-requests-section" style="display:none; margin-bottom:24px;">
+                        <h3>Pedidos</h3><div id="friend-requests-list"></div>
+                    </div>
+                    <div id="friends-list"></div>
+                </div>
+
+                <div id="friend-profile-view" style="display: none;">
+                    <button onclick="backToFriendsList()" style="background:none; border:none; color:var(--text-muted); margin-bottom:20px;">← Voltar</button>
+                    <div style="text-align: center;">
+                        <div id="fp-avatar-container" style="width:100px; height:100px; border-radius:50%; margin:0 auto 16px; border:2px solid var(--gold); overflow:hidden;"></div>
+                        <h2 id="fp-name" style="color:var(--text-primary);"></h2>
+                        <p id="fp-username" style="color:var(--gold); margin-bottom:12px;"></p>
+                        
+                        <div id="fp-bio-section" style="margin-bottom:12px; font-style:italic; color:var(--text-secondary); display:none;"><p id="fp-bio"></p></div>
+                        <div id="fp-intention-section" style="background:rgba(107,45,61,0.2); padding:12px; border-radius:8px; margin-bottom:24px; display:none;"><small style="color:var(--burgundy-bright);">INTENÇÃO</small><p id="fp-intention" style="color:white;"></p></div>
+
+                        <button id="btn-pray-friend" onclick="sendPrayerToFriend()" style="width:100%; max-width:340px; padding:16px; margin:0 auto 24px; background:var(--burgundy); color:white; border:none; border-radius:8px; cursor:pointer;">🙏 Rezar por esta intenção</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-profile" class="tab-content">
+            <div style="padding: 24px; text-align: center;">
+                <div id="profile-avatar" onclick="openAvatarModal()" style="cursor:pointer;"></div>
+                <h2 id="profile-name" style="color:var(--text-primary);"></h2>
+                
+                <div class="profile-section">
+                    <label class="profile-label">Bio</label><textarea id="profile-bio" class="profile-input profile-textarea"></textarea>
+                    <label class="profile-label">Intenção</label><input type="text" id="profile-intention" class="profile-input">
+                    <button onclick="saveProfileData()" class="avatar-save-btn" style="margin-top:16px;">Atualizar Perfil</button>
+                </div>
+                
+                <button onclick="logoutUser()" style="width:100%; max-width:300px; padding:16px; background:rgba(180,60,60,0.2); color:#e07070; border:1px solid rgba(180,60,60,0.3); border-radius:8px; cursor:pointer;">Sair</button>
+                <div class="small-btn-row" style="justify-content:center; margin-top:20px;">
+                    <a href="/faq" class="small-btn">FAQ</a>
+                    <a href="/privacidade" class="small-btn">Privacidade</a>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Completion Screen -->
-    <div id="completion-screen">
-        <svg class="completion-icon" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="50" cy="50" r="42"/>
-            <path d="M28 50l16 16 28-32" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <h2 class="completion-title">Deo Gratias</h2>
-        <p class="completion-subtitle" id="completion-msg"></p>
-        <div class="completion-stats">
-            <div class="stat"><div class="stat-value" id="stat-aves">0</div><div class="stat-label">Ave Marias</div></div>
-            <div class="stat"><div class="stat-value" id="stat-paters">0</div><div class="stat-label">Pai Nossos</div></div>
+    <nav class="bottom-nav">
+        <button class="nav-item active" data-tab="home"><span class="nav-label">Início</span></button>
+        <button class="nav-item" data-tab="rosary"><span class="nav-label">Rosário</span></button>
+        <button class="nav-item" data-tab="calendar"><span class="nav-label">Calendário</span></button>
+        <button class="nav-item" data-tab="friends"><span class="nav-label">Amigos</span></button>
+        <button class="nav-item" data-tab="profile"><span class="nav-label">Perfil</span></button>
+    </nav>
+</div>
+
+<div id="avatar-modal"><div class="avatar-modal-content">
+    <button class="avatar-modal-close" onclick="closeAvatarModal()">×</button>
+    <h2>Escolha seu Avatar</h2><div class="avatar-grid" id="avatar-grid"></div>
+    <button class="avatar-save-btn" id="avatar-save-btn" onclick="saveAvatar()">Salvar</button>
+</div></div>
+
+<div id="inbox-modal"><div class="avatar-modal-content" style="max-height:80vh; display:flex; flex-direction:column;">
+    <button class="avatar-modal-close" onclick="closeInboxModal()">×</button>
+    <h2>Caixa de Entrada</h2>
+    <div id="inbox-list" style="flex:1; overflow-y:auto;"></div>
+    <button class="avatar-save-btn" onclick="closeInboxModal()" style="margin-top:16px; background:transparent; border:1px solid var(--border-subtle);">Fechar</button>
+</div></div>
+
+<div id="prayer-screen">
+    <div class="rosary-rail"><div class="rosary-chain"></div><div id="bead-track"></div></div>
+    <div class="prayer-main">
+        <header class="prayer-header">
+            <button class="back-btn" onclick="app.confirmExit()">Sair</button>
+            <div class="progress-compact"><div class="progress-bar-mini"><div class="progress-fill-mini" id="progress-fill"></div></div><span id="progress-text"></span></div>
+        </header>
+        <div class="prayer-body">
+            <div id="prayer-group" class="prayer-group"></div>
+            <div id="prayer-mystery" class="prayer-mystery"></div>
+            <h2 id="prayer-name" class="prayer-name"></h2>
+            <img id="mystery-image" class="mystery-image" onclick="app.toggleImageZoom()">
+            <div id="meditation-box" class="meditation-box"><div class="meditation-label">Meditação</div><p id="meditation-text" class="meditation-text"></p></div>
+            <button id="prayer-text-toggle" class="prayer-text-toggle" onclick="app.toggleText()">Ver Oração</button>
+            <div id="prayer-full-text" class="prayer-full-text"></div>
         </div>
-        <button class="btn-home" onclick="app.home()">Voltar ao Início</button>
+        <footer class="prayer-footer">
+            <button class="nav-btn" onclick="app.prev()">&lt;</button>
+            <button class="nav-btn primary" onclick="app.next()">&gt;</button>
+        </footer>
     </div>
+</div>
 
-    <!-- Audio Toggle -->
-    <button class="audio-toggle" id="audio-toggle" onclick="app.toggleAudio()" title="Ativar/Desativar sons (M)">
-        <svg id="audio-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none;">
-            <path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
-        </svg>
-        <svg id="audio-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
-        </svg>
-    </button>
+<div id="completion-screen">
+    <h2 class="completion-title">Deo Gratias</h2>
+    <p id="completion-msg" class="completion-subtitle"></p>
+    <div class="completion-stats">
+        <div class="stat"><div class="stat-value" id="stat-aves">0</div><div class="stat-label">Aves</div></div>
+        <div class="stat"><div class="stat-value" id="stat-paters">0</div><div class="stat-label">Pai Nossos</div></div>
+    </div>
+    <button class="btn-home" onclick="app.home()">Voltar ao Início</button>
+</div>
 
-    <!-- Scripts -->
-    <script src="js/templates/home.js"></script>
-    <script src="js/templates/rosary.js"></script>
-    <script src="js/templates/calendar.js"></script>
-    <script src="js/templates/friends.js"></script>
-    <script src="js/templates/profile.js"></script>
-    
-    <script type="module" src="js/firebase-auth.js"></script>
-    <script src="js/utils/avatar-helper.js"></script>
-    <script src="js/components/avatar-system.js"></script>
-    <script src="js/components/audio-system.js"></script>
-    <script src="js/data/prayers.js"></script>
-    <script src="js/data/montfort.js"></script>
-    <script src="js/core/prayer-app.js"></script>
-    <script src="js/init.js"></script>
+<button class="audio-toggle" id="audio-toggle" onclick="app.toggleAudio()">
+    <svg id="audio-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+    <svg id="audio-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+</button>
+
+<script type="module" src="app.js"></script>
 </body>
 </html>
